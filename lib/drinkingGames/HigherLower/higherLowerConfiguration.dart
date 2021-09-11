@@ -204,7 +204,7 @@ class _HigherLowerConfigurationState extends State<HigherLowerConfiguration> {
               });
             },
           ),
-          title: Text("Shoutcounter",
+          title: Text("Shotcounter",
               style: TextStyle(fontSize: 20, color: Colors.white)),
         ),
       ));

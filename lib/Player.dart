@@ -7,6 +7,7 @@ class Player {
   int maxShots = 0 ;
   Image photo = Image.asset("img/penguin.png");
   Sex sex = Sex("");
+  int currentShots = 0;
 
   Player({this.name, this.age, this.maxShots, this.photo, this.sex});
 

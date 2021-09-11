@@ -117,9 +117,6 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
                 child: FloatingActionButton(
                   backgroundColor: Colors.lightBlue,
                   onPressed: () {
-                    for (int i = 0; i < textEditingControllers.length; i++) {
-                      print(textEditingControllers[i].text);
-                    }
                     setState(() {
                       numberOfPlayers += 1;
                       for (int i = 0; i < numberOfTextFields; i++) {
@@ -284,7 +281,6 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
             child: IconButton(
               icon: Image.asset("img/garbageBin.png"),
               onPressed: () {
-                //  print("$i" + sexes[i~/3]);
                 setState(() {
                   for (int j = 0; j < numberOfTextFields; j++) {
                     textEditingControllers.removeAt(i);
@@ -293,7 +289,6 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
                     sexes.removeAt(i ~/ numberOfTextFields);
                   }
                   numberOfPlayers--;
-                  //print("$i" + sexes[i~/3]);
                 });
               },
             ),

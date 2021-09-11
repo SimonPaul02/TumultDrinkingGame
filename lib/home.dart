@@ -28,33 +28,35 @@ class _HomeState extends State<Home> {
             centerTitle: true,
           ),
           backgroundColor: Colors.transparent,
-          body: Padding(
-            padding: const EdgeInsets.only(top: 40),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                buildOutlinedButton(
-                    "/higherLower",
-                    "Higher-Lower ist ein Klassiker, aber hier eine exzellente Variante: Anfangs wird eine Karte offengelgt. Danach müsst ihr sagen, ob die Folgekarte höher, oder niedriger ist und die nächste Karte dann aufdecken. Liegt ihr falsch, so müsst ihr so viel trinken, wie die Karte es verlangt. Man ist so lange dran, bis man richtig rät. Setzt euch zu Beginn ein Ziel, zB 100 Karten. Gutes Gesaufe!",
-                    "Higher-Lower"),
-                buildOutlinedButton(
-                    "/drinkingCards",
-                    "In allen Exzellentsstufen, für jeden was dabei: Einzel- und Gruppenkarten, die euren Alkoholpegel steigen lassen werden. Tragt am besten eueren Namen mit Geschlecht vorher ein, dann wird das Spiel optimal auf euch angepasst. Gerne könnt ihr auch angeben, wieviel ihr maximal trinken wollt und dann mit dem Shotcounter auf der rechten Seite mitzählen. Viel Spaß!",
-                    "Saufkarten"),
-                buildOutlinedButton("null", "", "Mehr"),
-                Visibility(
-                    visible: isVisibleExplanation,
-                    child: buildExplanationContainer(explanation)),
-                Visibility(
-                    visible: isVisibleGif,
-                    child: Container(
-                      height: 400,
-                      width: 40,
-                      child: Image(image: AssetImage("img/beer2.gif")),
-                    ))
-              ],
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 40),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  buildOutlinedButton(
+                      "/higherLower",
+                      "Higher-Lower ist ein Klassiker, aber hier eine exzellente Variante: Anfangs wird eine Karte offengelgt. Danach müsst ihr sagen, ob die Folgekarte höher, oder niedriger ist und die nächste Karte dann aufdecken. Liegt ihr falsch, so müsst ihr so viel trinken, wie die Karte es verlangt. Man ist so lange dran, bis man richtig rät. Setzt euch zu Beginn ein Ziel, zB 100 Karten. Gutes Gesaufe!",
+                      "Higher-Lower"),
+                  buildOutlinedButton(
+                      "/drinkingCards",
+                      "In allen Exzellentsstufen, für jeden was dabei: Einzel- und Gruppenkarten, die euren Alkoholpegel steigen lassen werden. Tragt am besten eueren Namen mit Geschlecht vorher ein, dann wird das Spiel optimal auf euch angepasst. Gerne könnt ihr auch angeben, wieviel ihr maximal trinken wollt und dann mit dem Shotcounter auf der rechten Seite mitzählen. Viel Spaß!",
+                      "Saufkarten"),
+                  buildOutlinedButton("null", "", "Mehr"),
+                  Visibility(
+                      visible: isVisibleExplanation,
+                      child: buildExplanationContainer(explanation)),
+                  Visibility(
+                      visible: isVisibleGif,
+                      child: Container(
+                        height: 400,
+                        width: 40,
+                        child: Image(image: AssetImage("img/beer2.gif")),
+                      ))
+                ],
+              ),
             ),
           )),
     );

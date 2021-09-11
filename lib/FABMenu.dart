@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'Player.dart';
 
 // sources (August 2021): https://www.youtube.com/watch?v=DWVXBo5Z1pk&t=130s and
 //https://medium.com/@agungsurya/create-a-simple-animated-floatingactionbutton-in-flutter-2d24f37cfbcc
 
-class FABMenu extends StatefulWidget {
-  final Function() onPressed;
+class ShotCounter extends StatefulWidget {
   final String tooltip;
-  final IconData icon;
+  List<Player> players;
 
-  FABMenu({this.onPressed, this.tooltip, this.icon});
+  ShotCounter({this.tooltip, this.players});
 
   @override
-  _FABMenuState createState() => _FABMenuState();
+  _ShotCounterState createState() => _ShotCounterState();
 }
 
-class _FABMenuState extends State<FABMenu> with SingleTickerProviderStateMixin {
+const TWO_PI = 3.14 * 2;
+
+class _ShotCounterState extends State<ShotCounter>
+    with SingleTickerProviderStateMixin {
   bool isOpened = false;
   AnimationController _animationController;
   Animation<Color> _buttonColor;
@@ -22,6 +25,7 @@ class _FABMenuState extends State<FABMenu> with SingleTickerProviderStateMixin {
   Animation<double> _translateButton;
   Curve _curve = Curves.easeOut;
   double _fabHeight = 56.0;
+  final borderSize = 56.0;
 
   @override
   initState() {
@@ -40,12 +44,12 @@ class _FABMenuState extends State<FABMenu> with SingleTickerProviderStateMixin {
       curve: Interval(
         0.00,
         1.00,
-        curve: Curves.linear,
+        curve: Curves.linearToEaseOut,
       ),
     ));
     _translateButton = Tween<double>(
       begin: _fabHeight,
-      end: -14.0,
+      end: -10.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Interval(
@@ -75,6 +79,7 @@ class _FABMenuState extends State<FABMenu> with SingleTickerProviderStateMixin {
   Widget add() {
     return Container(
       child: FloatingActionButton(
+        heroTag: null,
         onPressed: null,
         tooltip: 'Add',
         child: Icon(Icons.add),
@@ -82,29 +87,11 @@ class _FABMenuState extends State<FABMenu> with SingleTickerProviderStateMixin {
     );
   }
 
-  Widget image() {
-    return Container(
-      child: FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Image',
-        child: Icon(Icons.image),
-      ),
-    );
-  }
-
-  Widget inbox() {
-    return Container(
-      child: FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Inbox',
-        child: Icon(Icons.inbox),
-      ),
-    );
-  }
-
   Widget toggle() {
     return Container(
+      alignment: Alignment.bottomRight,
       child: FloatingActionButton(
+        heroTag: null,
         backgroundColor: _buttonColor.value,
         onPressed: animate,
         tooltip: 'Toggle',
@@ -116,37 +103,118 @@ class _FABMenuState extends State<FABMenu> with SingleTickerProviderStateMixin {
     );
   }
 
+  Padding buildPlayerButton(Player player, int factor) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Transform(
+        transform: transform(factor),
+        child: Container(
+          width: borderSize,
+          height: borderSize,
+          child: Stack(
+            children: [
+              ShaderMask(
+                shaderCallback: (rect) {
+                  return SweepGradient(
+                          startAngle: 0.0,
+                          endAngle: TWO_PI,
+                          stops: [0.9, 0.95],
+                          // start percentage,
+                          // 0.0 , 0.5 , 0.5 , 1.0
+                          center: Alignment.center,
+                          colors: [Colors.white, Colors.transparent])
+                      .createShader(rect);
+                },
+                child: Container(
+                  width: borderSize,
+                  height: borderSize,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.white),
+                ),
+              ),
+              Center(
+                  child: ElevatedButton(
+                onPressed: () {
+                  print("ffffffffffffff");
+                },
+                child: Text(
+                  player.currentShots.toString(),
+                  style: TextStyle(color: Colors.purple),
+                ),
+                style: TextButton.styleFrom(
+                    //  backgroundColor: Colors.green,
+                    shape: CircleBorder(),
+                    padding: EdgeInsets.all(14)),
+              )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return widget.players == null
+        ? Column()
+        : SingleChildScrollView(
+            padding: buildTogglePadding(),
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 100,
+                ),
+                if (widget.players != null && isOpened)
+                  for (int i = widget.players.length; i > 0; i--)
+                    //buildPlayerButton(widget.players[i - 1], i),
+                    buildButtonWithText(widget.players[i - 1], i),
+                SizedBox(
+                  height: 25,
+                ),
+                toggle(), // factor 0
+              ],
+            ),
+          );
+  }
+
+  Row buildButtonWithText(Player player, int factor) {
+    return Row(
       mainAxisAlignment: MainAxisAlignment.end,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 3.0,
-            0.0,
+          transform: transform(factor),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 12, 0),
+            child: RichText(
+              text: TextSpan(
+                text: player.name,
+                style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
           ),
-          child: add(),
         ),
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value * 2.0,
-            0.0,
-          ),
-          child: image(),
-        ),
-        Transform(
-          transform: Matrix4.translationValues(
-            0.0,
-            _translateButton.value,
-            0.0,
-          ),
-          child: inbox(),
-        ),
-        toggle(),
+        //Container(color: Colors.orange, width: 50, height: 20,),
+        buildPlayerButton(player, factor)
       ],
+    );
+  }
+
+  EdgeInsets buildTogglePadding() {
+    if (!isOpened) {
+      return const EdgeInsets.only(bottom: 15);
+    }
+    return const EdgeInsets.fromLTRB(0, 100, 0, 15);
+  }
+
+  Matrix4 transform(int factor) {
+    return Matrix4.translationValues(
+      0.0,
+      _translateButton.value * factor,
+      0.0,
     );
   }
 }
