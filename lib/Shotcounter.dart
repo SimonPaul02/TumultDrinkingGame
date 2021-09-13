@@ -76,29 +76,15 @@ class _ShotCounterState extends State<ShotCounter>
     isOpened = !isOpened;
   }
 
-  Widget add() {
-    return Container(
-      child: FloatingActionButton(
-        heroTag: null,
-        onPressed: null,
-        tooltip: 'Add',
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-
   Widget toggle() {
-    return Container(
-      alignment: Alignment.bottomRight,
-      child: FloatingActionButton(
-        heroTag: null,
-        backgroundColor: _buttonColor.value,
-        onPressed: animate,
-        tooltip: 'Toggle',
-        child: AnimatedIcon(
-          icon: AnimatedIcons.menu_close,
-          progress: _animateIcon,
-        ),
+    return FloatingActionButton(
+      heroTag: null,
+      backgroundColor: _buttonColor.value,
+      onPressed: animate,
+      tooltip: 'Toggle',
+      child: AnimatedIcon(
+        icon: AnimatedIcons.menu_close,
+        progress: _animateIcon,
       ),
     );
   }
@@ -118,11 +104,11 @@ class _ShotCounterState extends State<ShotCounter>
                   return SweepGradient(
                           startAngle: 0.0,
                           endAngle: TWO_PI,
-                          stops: [0.9, 0.95],
+                          stops: calculateStops(player),
                           // start percentage,
                           // 0.0 , 0.5 , 0.5 , 1.0
                           center: Alignment.center,
-                          colors: [Colors.white, Colors.transparent])
+                          colors: [calculateColor(player), Colors.transparent])
                       .createShader(rect);
                 },
                 child: Container(
@@ -135,14 +121,29 @@ class _ShotCounterState extends State<ShotCounter>
               Center(
                   child: ElevatedButton(
                 onPressed: () {
-                  print("ffffffffffffff");
+                  setState(() {
+                    player.currentShots++;
+                  });
+                },
+                onLongPress: () {
+                  setState(() {
+                    if (player.currentShots > 0) {
+                      player.currentShots--;
+                    }
+                  });
                 },
                 child: Text(
                   player.currentShots.toString(),
-                  style: TextStyle(color: Colors.purple),
+                  style: TextStyle(
+                      color: (player.currentShots < player.maxShots)
+                          ? Colors.black
+                          : Colors.white),
                 ),
-                style: TextButton.styleFrom(
-                    //  backgroundColor: Colors.green,
+                style: ElevatedButton.styleFrom(
+                    //
+                    primary: (player.currentShots < player.maxShots)
+                        ? Colors.blue
+                        : Colors.blueGrey,
                     shape: CircleBorder(),
                     padding: EdgeInsets.all(14)),
               )),
@@ -153,6 +154,11 @@ class _ShotCounterState extends State<ShotCounter>
     );
   }
 
+  List<double> calculateStops(Player player) {
+    player.calculatePercentage();
+    return [player.shotPercentage, player.shotPercentage + 0.05];
+  }
+
   @override
   Widget build(BuildContext context) {
     return widget.players == null
@@ -160,6 +166,7 @@ class _ShotCounterState extends State<ShotCounter>
         : SingleChildScrollView(
             padding: buildTogglePadding(),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 SizedBox(
                   height: 100,
@@ -171,7 +178,9 @@ class _ShotCounterState extends State<ShotCounter>
                 SizedBox(
                   height: 25,
                 ),
-                toggle(), // factor 0
+                // factor 0
+
+                toggle(),
               ],
             ),
           );
@@ -216,5 +225,31 @@ class _ShotCounterState extends State<ShotCounter>
       _translateButton.value * factor,
       0.0,
     );
+  }
+
+  Color calculateColor(Player player) {
+    // shot percentage is already updated
+    if (player.shotPercentage < 0.1) {
+      return Colors.green;
+    }
+    if (player.shotPercentage < 0.2) {
+      return Colors.lightGreenAccent;
+    }
+    if (player.shotPercentage < 0.3) {
+      return Colors.lime;
+    }
+    if (player.shotPercentage < 0.4) {
+      return Colors.yellowAccent;
+    }
+    if (player.shotPercentage < 0.55) {
+      return Colors.amber;
+    }
+    if (player.shotPercentage < 0.7) {
+      return Colors.orange;
+    }
+    if (player.shotPercentage < 0.85) {
+      return Colors.deepOrange;
+    }
+    return Colors.red;
   }
 }

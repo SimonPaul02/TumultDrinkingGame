@@ -118,6 +118,7 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
                   backgroundColor: Colors.lightBlue,
                   onPressed: () {
                     setState(() {
+                      finishButtonColor = Colors.grey;
                       numberOfPlayers += 1;
                       for (int i = 0; i < numberOfTextFields; i++) {
                         textEditingControllers.add(TextEditingController());
@@ -289,6 +290,7 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
                     sexes.removeAt(i ~/ numberOfTextFields);
                   }
                   numberOfPlayers--;
+                  evaluateFinishButtonColor();
                 });
               },
             ),

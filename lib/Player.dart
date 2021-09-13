@@ -8,6 +8,7 @@ class Player {
   Image photo = Image.asset("img/penguin.png");
   Sex sex = Sex("");
   int currentShots = 0;
+  double shotPercentage = 0.0;
 
   Player({this.name, this.age, this.maxShots, this.photo, this.sex});
 
@@ -19,6 +20,10 @@ class Player {
   @override
   String toString() {
     return ("Name: $name  age: $age maxshots: $maxShots sex: $sex ");
+  }
+
+  void calculatePercentage() {
+    shotPercentage = currentShots / maxShots;
   }
   
 }
