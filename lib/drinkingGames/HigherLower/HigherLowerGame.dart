@@ -1,5 +1,6 @@
-import 'dart:collection';
-
+import 'dart:math';
+import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import '../../Player.dart';
 import '../../Shotcounter.dart';
@@ -14,6 +15,21 @@ class HigherLowerGame extends StatefulWidget {
 }
 
 class _DrinkingCardsState extends State<HigherLowerGame> {
+  bool somebodyHasToDrink = false;
+  List<bool> visibilities = [false, false, false];
+  List<bool> emptyDrinks = [false, false, false];
+
+  List<int> states = [
+    2,
+    2
+  ]; // 0 is invisible drink, 1 is visible and full 2 is visible and empty
+  var random = new Random();
+  int randomNumber = 0;
+  double _opacity = 1.0;
+  bool showGreenAnimation = true;
+  final double CARDPADDINGTOP = 30.0;
+  final double CARDHEIGHT = 400.0;
+  Color animationColor = Colors.green;
   int numberOfCards;
   final String flag = "img/cardDeck/";
   int playerIndex = 0;
@@ -49,78 +65,88 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
     addToCards("K");
     addToCards("Q");
     addToCards("T");
-    cards.add("BG1");
-    cards.add("BG2");
+    //cards.add("BG1");
+    //cards.add("BG2");
     cards.shuffle();
   }
 
   void addToCards(String char) {
-    cards.add("$char C");
-    cards.add("$char D");
-    cards.add("$char H");
-    cards.add("$char S");
+    cards.add(char + "C");
+    cards.add(char + "D");
+    cards.add(char + "H");
+    cards.add(char + "S");
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_opacity != 1.0) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() {
+          _opacity = 1.0;
+        });
+      });
+    }
     return Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("img/beer1.jpg"),
-            fit: BoxFit.cover,
-          ),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("img/wine1.jpg"),
+          fit: BoxFit.cover,
         ),
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.black,
-            elevation: 0,
-            title: Text(printNumberOfCards()),
-            centerTitle: true,
-          ),
-          backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 40),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AnimatedCrossFade(
-                      duration: Duration(milliseconds: 1000),
-                      crossFadeState: showNextCard
-                          ? CrossFadeState.showSecond
-                          : CrossFadeState.showFirst,
-                      firstChild: SizedBox(
-                        width: 300,
-                        height: 400,
-                        child: Image.asset(
-                          flag + "2C" + ".png",
-                        ),
-                      ),
-                      secondChild: SizedBox(
-                        width: 300,
-                        height: 400,
-                        child: Image.asset(
-                          flag + "9S" + ".png",
-                        ),
+      ),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          elevation: 0,
+          title: Text(printNumberOfCards()),
+          centerTitle: true,
+        ),
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
+          child: Stack(children: [
+            fullScreen(),
+            Positioned(
+                top: CARDPADDINGTOP,
+                left: 70,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: Container(
+                    color: animationColor,
+                    child: AnimatedOpacity(
+                      duration: Duration(milliseconds: 500),
+                      opacity: _opacity,
+                      child: AnimatedCrossFade(
+                        firstCurve: Curves.decelerate,
+                        duration: Duration(milliseconds: 500),
+                        crossFadeState: showNextCard && _opacity == 0.0
+                            ? CrossFadeState.showSecond
+                            : CrossFadeState.showFirst,
+                        firstChild: buildCard(),
+                        secondChild: buildCard(),
                       ),
                     ),
-                    //ShotCounter(tooltip: "Menu", players: widget.players),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        higherLowerButton(true),
-                        higherLowerButton(false)
-                      ],
-                    ),
-                    evaluatePlayerTurn(),
-                  ]),
+                  ),
+                )),
+            Positioned(bottom: 20, child: ShotCounter(widget.players)),
+            Positioned(
+              top: CARDHEIGHT + CARDPADDINGTOP,
+              left: 85.0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  higherLowerButton(true),
+                  higherLowerButton(false),
+                ],
+              ),
             ),
-          ),
-          floatingActionButton:
-              ShotCounter(tooltip: "Menu", players: widget.players),
-        )
+            Positioned(bottom: 25, child: evaluatePlayerTurn()),
+            Positioned(
+              left: 55,
+              top: 175,
+              child: buildShots(),
+            ),
+          ]),
+        ),
+      ),
     );
   }
 
@@ -137,16 +163,33 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
         ),
         tooltip: isHigher ? "Higher" : "Lower",
         onPressed: () {
-          print("afdsklkjadslöfjaslödfjasklöjfd");
-          nextCard();
-          setState(() {
-            if (numberOfCards > 0) {
-              numberOfCards--;
+          if (!somebodyHasToDrink) {
+            if (!isHigher && currentCardIsLower()) {
+              animationColor = Colors.green;
+            } else if (isHigher && currentCardIsHigher()) {
+              animationColor = Colors.green;
+            } else {
+              animationColor = Colors.red;
+              somebodyHasToDrink = true;
+              for (int i = 0; i <= randomNumber; i++) {
+                visibilities[i] = true;
+                emptyDrinks[i] = false;
+              }
+              setState(() {
+                randomNumber = random.nextInt(3);
+              });
             }
-          });
-          if (isHigher && currentCardIsHigher() ||
-              !isHigher && currentCardIsLower()) {
-          } else {}
+            nextCard();
+            setState(() {
+              if (numberOfCards > 0) {
+                numberOfCards--;
+              }
+              _opacity = _opacity == 1.0 ? 0.1 : 1.0;
+              if (widget.players != null) {
+                playerIndex = (playerIndex + 1) % widget.players.length;
+              }
+            });
+          }
         },
       ),
     );
@@ -165,21 +208,29 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
     return "Higher-Lower";
   }
 
-  Text evaluatePlayerTurn() {
-    if (widget.players == null) {
-      return Text("");
+  Widget evaluatePlayerTurn() {
+    if (widget.players != null) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        height: 30,
+        child: Text(
+          (somebodyHasToDrink)
+              ? widget.players[(playerIndex - 1) % widget.players.length].name +
+                  " muss trinken"
+              : widget.players[playerIndex].name + " ist dran",
+          style: TextStyle(color: Colors.white, fontSize: 22),
+          textAlign: TextAlign.center,
+        ),
+      );
     }
-    return Text(
-      widget.players[playerIndex].name + " ist dran",
-      style: TextStyle(color: Colors.white, fontSize: 22),
-    );
+    return Text("");
   }
 
   void nextCard() {
     setState(() {
       showNextCard = !showNextCard;
       cardIndex++;
-      if (cardIndex == 56) {
+      if (cardIndex == 52) {
         cardIndex = 0;
         cards.shuffle();
       }
@@ -191,16 +242,124 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
     return order.indexOf(currentCardValue);
   }
 
-  int findPrevCardLevel() {
-    String prevCardValue = cards[(cardIndex - 1) % 56].substring(0, 1);
-    return order.indexOf(prevCardValue);
+  int findNextCardLevel() {
+    String nextCardValue = cards[(cardIndex + 1) % 52].substring(0, 1);
+    return order.indexOf(nextCardValue);
   }
 
   bool currentCardIsLower() {
-    return (findCurrentCardLevel() > findPrevCardLevel());
+    for (int i = 0; i < 3; i++) {
+      print(visibilities[i]);
+      print(emptyDrinks[i]);
+      print(" ");
+    }
+    return (findCurrentCardLevel() > findNextCardLevel());
   }
 
   bool currentCardIsHigher() {
-    return (findCurrentCardLevel() < findPrevCardLevel());
+    return (findCurrentCardLevel() < findNextCardLevel());
+  }
+
+  double evaluateRightPadding() {
+    if (widget.players == null) {
+      return 0;
+    }
+    return 20;
+  }
+
+  SizedBox buildCard() {
+    return SizedBox(
+        width: 257,
+        height: CARDHEIGHT,
+        child: Image.asset(
+          flag + cards[cardIndex] + ".png",
+        ));
+  }
+
+  SizedBox fullScreen() {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
+    EdgeInsets padding = MediaQuery.of(context).padding;
+    height = height - padding.top - padding.bottom - kToolbarHeight;
+    return SizedBox(
+      width: width,
+      height: height,
+    );
+  }
+
+  Widget buildShot(int visibilityIndex) {
+    print(visibilityIndex);
+    print("vis " + visibilities[visibilityIndex].toString());
+    print("emp " + emptyDrinks[visibilityIndex].toString());
+    if (visibilities[visibilityIndex] == false &&
+        emptyDrinks[visibilityIndex] == false) {
+      return Row();
+    }
+    return Visibility(
+      visible: visibilities[visibilityIndex],
+      child: IconButton(
+        icon: (emptyDrinks[visibilityIndex] == true)
+            ? selectEmptyGlass(visibilityIndex)
+            : selectFullGlass(visibilityIndex),
+        iconSize: 80,
+        onPressed: () {
+          setState(() {
+            if (widget.players != null) {
+              widget.players[(playerIndex - 1) % widget.players.length]
+                  .currentShots++;
+            }
+            emptyDrinks[visibilityIndex] = true;
+            checkAllEmpty();
+          });
+        },
+      ),
+    );
+  }
+
+  Row buildShots() {
+    return Row(children: [for (int i = 0; i < 3; i++) buildShot(i)]);
+  }
+
+  Image selectFullGlass(int i) {
+    if (i == 0) {
+      return Image.asset("img/shotGlassFull.png");
+    }
+    if (i == 1) {
+      return Image.asset("img/cocktailFull.png");
+    }
+    return Image.asset("img/wineGlassFull.png");
+  }
+
+  Image selectEmptyGlass(int i) {
+    if (i == 0) {
+      return Image.asset("img/shotGlassEmpty.png");
+    }
+    if (i == 1) {
+      return Image.asset("img/cocktailEmpty.png");
+    }
+    return Image.asset("img/wineGlassEmpty.png");
+  }
+
+  bool allInvisible() {
+    for (int i = 0; i < visibilities.length; i++) {
+      if (visibilities[i] == true) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void checkAllEmpty() {
+    for (int i = 0; i < 3; i++) {
+      if (emptyDrinks[i] == false && visibilities[i] == true) return;
+    }
+    setState(() {
+      somebodyHasToDrink = false;
+    });
+
+    for (int i = 0; i < 3; i++) {
+      emptyDrinks[i] = false;
+      visibilities[i] = false;
+    }
   }
 }

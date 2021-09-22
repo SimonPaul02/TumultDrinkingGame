@@ -2,9 +2,7 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:flutter/services.dart';
 import 'package:tumult_trinkspiel/drinkingGames/HigherLower/HigherLowerGame.dart';
-import '../../Player.dart';
 import 'HigherLowerGame.dart';
-import 'package:tumult_trinkspiel/playerConfiguration.dart';
 
 class HigherLowerConfiguration extends StatefulWidget {
   @override
@@ -31,7 +29,7 @@ class _HigherLowerConfigurationState extends State<HigherLowerConfiguration> {
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("img/wine1.jpg"),
+          image: AssetImage("img/wine2.jpg"),
           fit: BoxFit.cover,
         ),
       ),

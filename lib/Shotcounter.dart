@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'Player.dart';
 
-// sources (August 2021): https://www.youtube.com/watch?v=DWVXBo5Z1pk&t=130s and
-//https://medium.com/@agungsurya/create-a-simple-animated-floatingactionbutton-in-flutter-2d24f37cfbcc
-
 class ShotCounter extends StatefulWidget {
-  final String tooltip;
+  final String tooltip = "Shoutcounter";
   List<Player> players;
 
-  ShotCounter({this.tooltip, this.players});
+  ShotCounter(players) {
+    this.players = players;
+  }
 
   @override
   _ShotCounterState createState() => _ShotCounterState();
@@ -24,13 +23,13 @@ class _ShotCounterState extends State<ShotCounter>
   Animation<double> _animateIcon;
   Animation<double> _translateButton;
   Curve _curve = Curves.easeOut;
-  double _fabHeight = 56.0;
-  final borderSize = 56.0;
+  final double _fabHeight = 56.0;
+  final _borderSize = 56.0;
 
   @override
   initState() {
     _animationController =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+        AnimationController(vsync: this, duration: Duration(milliseconds: 400))
           ..addListener(() {
             setState(() {});
           });
@@ -77,11 +76,13 @@ class _ShotCounterState extends State<ShotCounter>
   }
 
   Widget toggle() {
+    // sources (August 2021): https://www.youtube.com/watch?v=DWVXBo5Z1pk&t=130s and
+//https://medium.com/@agungsurya/create-a-simple-animated-floatingactionbutton-in-flutter-2d24f37cfbcc
     return FloatingActionButton(
       heroTag: null,
       backgroundColor: _buttonColor.value,
       onPressed: animate,
-      tooltip: 'Toggle',
+      tooltip: "Shotcounter",
       child: AnimatedIcon(
         icon: AnimatedIcons.menu_close,
         progress: _animateIcon,
@@ -92,63 +93,59 @@ class _ShotCounterState extends State<ShotCounter>
   Padding buildPlayerButton(Player player, int factor) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: Transform(
-        transform: transform(factor),
-        child: Container(
-          width: borderSize,
-          height: borderSize,
-          child: Stack(
-            children: [
-              ShaderMask(
-                shaderCallback: (rect) {
-                  return SweepGradient(
-                          startAngle: 0.0,
-                          endAngle: TWO_PI,
-                          stops: calculateStops(player),
-                          // start percentage,
-                          // 0.0 , 0.5 , 0.5 , 1.0
-                          center: Alignment.center,
-                          colors: [calculateColor(player), Colors.transparent])
-                      .createShader(rect);
-                },
-                child: Container(
-                  width: borderSize,
-                  height: borderSize,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: Colors.white),
-                ),
+      child: Container(
+        width: _borderSize,
+        height: _borderSize,
+        child: Stack(
+          children: [
+            ShaderMask(
+              shaderCallback: (rect) {
+                return SweepGradient(
+                        transform: GradientRotation(4.64),
+                        startAngle: 0.00,
+                        endAngle: TWO_PI,
+                        stops: calculateStops(player),
+                        center: Alignment.center,
+                        colors: [calculateColor(player), Colors.transparent])
+                    .createShader(rect);
+              },
+              child: Container(
+                width: _borderSize,
+                height: _borderSize,
+                decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: Colors.white),
               ),
-              Center(
-                  child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    player.currentShots++;
-                  });
-                },
-                onLongPress: () {
-                  setState(() {
-                    if (player.currentShots > 0) {
-                      player.currentShots--;
-                    }
-                  });
-                },
-                child: Text(
-                  player.currentShots.toString(),
-                  style: TextStyle(
-                      color: (player.currentShots < player.maxShots)
-                          ? Colors.black
-                          : Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                    //
-                    primary: (player.currentShots < player.maxShots)
-                        ? Colors.blue
-                        : Colors.blueGrey,
-                    shape: CircleBorder(),
-                    padding: EdgeInsets.all(14)),
-              )),
-            ],
-          ),
+            ),
+            Center(
+                child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  player.currentShots++;
+                });
+              },
+              onLongPress: () {
+                setState(() {
+                  if (player.currentShots > 0) {
+                    player.currentShots--;
+                  }
+                });
+              },
+              child: Text(
+                player.currentShots.toString(),
+                style: TextStyle(
+                    color: (player.currentShots < player.maxShots)
+                        ? Colors.black
+                        : Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                  //
+                  primary: (player.currentShots < player.maxShots)
+                      ? Colors.blue
+                      : Colors.blueGrey,
+                  shape: CircleBorder(),
+                  padding: EdgeInsets.all(14)),
+            )),
+          ],
         ),
       ),
     );
@@ -163,38 +160,44 @@ class _ShotCounterState extends State<ShotCounter>
   Widget build(BuildContext context) {
     return widget.players == null
         ? Column()
-        : SingleChildScrollView(
-            padding: buildTogglePadding(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                SizedBox(
-                  height: 100,
-                ),
-                if (widget.players != null && isOpened)
-                  for (int i = widget.players.length; i > 0; i--)
-                    //buildPlayerButton(widget.players[i - 1], i),
-                    buildButtonWithText(widget.players[i - 1], i),
-                SizedBox(
-                  height: 25,
-                ),
-                // factor 0
-
-                toggle(),
-              ],
-            ),
+        : SizedBox(
+            height: MediaQuery.of(context).size.height,
+            width: 400,
+            child: ListView(
+                shrinkWrap: false,
+                reverse: true,
+                padding: buildTogglePadding(),
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      SizedBox(
+                        height: 25,
+                      ),
+                      if (widget.players != null && isOpened)
+                        for (int i = widget.players.length; i > 0; i--)
+                          buildButtonWithText(widget.players[i - 1], i),
+                      //buildButtonWithText(widget.players[i - 1], 0),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      toggle(),
+                      // factor 0
+                    ],
+                  ),
+                ]),
           );
   }
 
-  Row buildButtonWithText(Player player, int factor) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: <Widget>[
-        Transform(
-          transform: transform(factor),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 12, 0),
+  Widget buildButtonWithText(Player player, int factor) {
+    return Transform(
+      transform: transform(factor),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 5, 0),
             child: RichText(
               text: TextSpan(
                 text: player.name,
@@ -205,10 +208,10 @@ class _ShotCounterState extends State<ShotCounter>
               ),
             ),
           ),
-        ),
-        //Container(color: Colors.orange, width: 50, height: 20,),
-        buildPlayerButton(player, factor)
-      ],
+          //Container(color: Colors.orange, width: 50, height: 20,),
+          buildPlayerButton(player, factor)
+        ],
+      ),
     );
   }
 
