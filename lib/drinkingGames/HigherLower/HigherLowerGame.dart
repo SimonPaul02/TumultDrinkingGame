@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
 import 'package:tumult_trinkspiel/drinkingGames/cardGame.dart';
 import '../../Player.dart';
-import '../../Shotcounter.dart';
+
 
 class HigherLowerGame extends StatefulWidget {
   @override
