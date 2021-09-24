@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tumult_trinkspiel/drinkingGames/cardGame.dart';
 import '../../Player.dart';
 
 class BusDriverGame extends StatefulWidget {
@@ -11,7 +12,7 @@ class BusDriverGame extends StatefulWidget {
   BusDriverGame({this.players, this.numberOfRounds});
 }
 
-class _BusDriverGameState extends State<BusDriverGame> {
+class _BusDriverGameState extends State<BusDriverGame> with CardGame{
   int roundsRemaining;
 
   @override
@@ -25,7 +26,7 @@ class _BusDriverGameState extends State<BusDriverGame> {
     return Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("img/wine1.jpg"),
+            image: AssetImage("img/beer1.jpg"),
             fit: BoxFit.cover,
           ),
         ),
