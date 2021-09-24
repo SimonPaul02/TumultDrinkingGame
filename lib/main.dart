@@ -3,11 +3,13 @@ import 'playerConfiguration.dart';
 import "home.dart";
 import 'drinkingGames/HigherLower/higherLowerConfiguration.dart';
 import 'drinkingGames/drinkingCards.dart';
+import 'drinkingGames/BusDriver/busDriverConfiguration.dart';
 
 void main() {
   runApp(MaterialApp(initialRoute: "/home", routes: {
     "/home": (contex) => Home(),
-    "/higherLower": (context) => HigherLowerConfiguration(),
+    "/higherLowerConfig": (context) => HigherLowerConfiguration(),
+    "/busDriverConfig": (context) => BusDriverConfiguration(),
     "/drinkingCards": (context) => DrinkingCards(),
     "/playerConfigurationSimple": (context) => PlayerConfiguration(true),
     "/playerConfigurationFull": (context) => PlayerConfiguration(false),
@@ -38,7 +40,7 @@ class Tumult extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key  );
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect

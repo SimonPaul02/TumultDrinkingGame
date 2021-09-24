@@ -27,8 +27,8 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
   int randomNumber = 0;
   double _opacity = 1.0;
   bool showGreenAnimation = true;
-  final double CARDPADDINGTOP = 30.0;
-  final double CARDHEIGHT = 400.0;
+  final double cardPaddingTop = 30.0;
+  final double cardHeight = 400.0;
   Color animationColor = Colors.green;
   int numberOfCards;
   final String flag = "img/cardDeck/";
@@ -95,6 +95,10 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
       ),
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.home_outlined, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
           backgroundColor: Colors.black,
           elevation: 0,
           title: Text(printNumberOfCards()),
@@ -105,7 +109,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
           child: Stack(children: [
             fullScreen(),
             Positioned(
-                top: CARDPADDINGTOP,
+                top: cardPaddingTop,
                 left: 70,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15.0),
@@ -126,9 +130,13 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
                     ),
                   ),
                 )),
-            Positioned(bottom: 20, child: ShotCounter(widget.players)),
             Positioned(
-              top: CARDHEIGHT + CARDPADDINGTOP,
+                bottom: 20,
+                child: ShotCounter(
+                  players: widget.players,
+                )),
+            Positioned(
+              top: cardHeight + cardPaddingTop,
               left: 85.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -159,7 +167,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
           isHigher
               ? Icons.arrow_circle_up_sharp
               : Icons.arrow_circle_down_sharp,
-          color: Colors.lightBlueAccent,
+          color: (somebodyHasToDrink) ? Colors.white24 : Colors.lightBlueAccent,
         ),
         tooltip: isHigher ? "Higher" : "Lower",
         onPressed: () {
@@ -248,11 +256,6 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
   }
 
   bool currentCardIsLower() {
-    for (int i = 0; i < 3; i++) {
-      print(visibilities[i]);
-      print(emptyDrinks[i]);
-      print(" ");
-    }
     return (findCurrentCardLevel() > findNextCardLevel());
   }
 
@@ -270,7 +273,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
   SizedBox buildCard() {
     return SizedBox(
         width: 257,
-        height: CARDHEIGHT,
+        height: cardHeight,
         child: Image.asset(
           flag + cards[cardIndex] + ".png",
         ));
@@ -288,9 +291,6 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
   }
 
   Widget buildShot(int visibilityIndex) {
-    print(visibilityIndex);
-    print("vis " + visibilities[visibilityIndex].toString());
-    print("emp " + emptyDrinks[visibilityIndex].toString());
     if (visibilities[visibilityIndex] == false &&
         emptyDrinks[visibilityIndex] == false) {
       return Row();

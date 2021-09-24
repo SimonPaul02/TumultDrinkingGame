@@ -55,7 +55,7 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
             title: Text("Spieler hinzufügen"),
             centerTitle: true,
           ),
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.black12,
           body: Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 100),
               child: SingleChildScrollView(

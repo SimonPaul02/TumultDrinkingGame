@@ -3,11 +3,9 @@ import 'Player.dart';
 
 class ShotCounter extends StatefulWidget {
   final String tooltip = "Shoutcounter";
-  List<Player> players;
+  final List<Player> players;
 
-  ShotCounter(players) {
-    this.players = players;
-  }
+  ShotCounter({this.players});
 
   @override
   _ShotCounterState createState() => _ShotCounterState();
