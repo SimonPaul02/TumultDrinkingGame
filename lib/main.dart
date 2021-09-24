@@ -13,6 +13,8 @@ void main() {
     "/drinkingCards": (context) => DrinkingCards(),
     "/playerConfigurationSimple": (context) => PlayerConfiguration(true),
     "/playerConfigurationFull": (context) => PlayerConfiguration(false),
+
+
   }));
 }
 

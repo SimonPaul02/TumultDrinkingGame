@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tumult_trinkspiel/configurationFacade.dart';
-import 'package:tumult_trinkspiel/drinkingGames/HigherLower/HigherLowerGame.dart';
-import 'drinkingGames/BusDriver/busDriverGame.dart';
 
 class Configuration extends StatefulWidget {
-  final String path;
+  final String configPath;
   final String title;
   final bool buildNumberOfCards;
   final bool buildNumberOfRounds;
-  final MaterialPageRoute gameCreation;
+  final Function(BuildContext) gameBuilder;
   final ConfigurationFacade configurationFacade;
 
   Configuration(
-      {this.path,
+      {this.configPath,
       this.title,
       this.buildNumberOfCards,
       this.buildNumberOfRounds,
-      this.gameCreation,
+      this.gameBuilder,
       this.configurationFacade});
 
   @override
@@ -78,9 +76,12 @@ class _ConfigurationState extends State<Configuration> {
                       onPressed: () async {
                         if (continueButtonColor == Colors.green) {
                           if (shotCounterActive) {
-                            var players =
-                                await Navigator.pushNamed(context, widget.path);
+                            var players = await Navigator.pushNamed(
+                                context, widget.configPath);
                             widget.configurationFacade.players = players;
+                            if (players == null) {
+                              return;
+                            }
                           }
                           widget.configurationFacade.numberOfPlayers =
                               numberOfPlayers;
@@ -88,10 +89,8 @@ class _ConfigurationState extends State<Configuration> {
                               numberOfCards;
                           widget.configurationFacade.numberOfRounds =
                               numberOfRounds;
-                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                            Navigator.pushReplacement(
-                                context, widget.gameCreation);
-                          });
+                          Navigator.of(context).push(new MaterialPageRoute(
+                              builder: widget.gameBuilder));
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -103,7 +102,8 @@ class _ConfigurationState extends State<Configuration> {
                     padding: const EdgeInsets.fromLTRB(85.0, 0, 85.0, 10.0),
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(context, widget.gameCreation);
+                        Navigator.of(context).push(
+                            new MaterialPageRoute(builder: widget.gameBuilder));
                       },
                       child: buildText("Überspringen"),
                     ),

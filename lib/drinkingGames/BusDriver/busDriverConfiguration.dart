@@ -14,16 +14,14 @@ class _BusDriverConfigurationState extends State<BusDriverConfiguration> {
   Widget build(BuildContext context) {
     ConfigurationFacade configurationFacade = ConfigurationFacade();
     return Configuration(
-      path: "/playerConfigurationSimple",
+      configPath: "/playerConfigurationSimple",
       title: "Busfahrer",
       buildNumberOfCards: false,
       buildNumberOfRounds: true,
       configurationFacade: configurationFacade,
-      gameCreation: new MaterialPageRoute(
-        builder: (context) => BusDriverGame(
-            players: configurationFacade.players,
-            numberOfRounds: configurationFacade.numberOfRounds),
-      ),
+      gameBuilder: (context) => BusDriverGame(
+          players: configurationFacade.players,
+          numberOfRounds: configurationFacade.numberOfRounds),
     );
   }
 }

@@ -16,16 +16,16 @@ class _HigherLowerConfigurationState extends State<HigherLowerConfiguration> {
   Widget build(BuildContext context) {
     ConfigurationFacade configurationFacade = ConfigurationFacade();
     return Configuration(
-      path: "/playerConfigurationSimple",
+      configPath: "/playerConfigurationSimple",
       title: "Higher-Lower",
       buildNumberOfCards: true,
       buildNumberOfRounds: false,
       configurationFacade: configurationFacade,
-      gameCreation: new MaterialPageRoute(
-        builder: (context) => HigherLowerGame(
+      gameBuilder:
+       (context) => HigherLowerGame(
             players: configurationFacade.players,
             numberOfCards: configurationFacade.numberOfCards),
-      ),
+
     );
   }
 }

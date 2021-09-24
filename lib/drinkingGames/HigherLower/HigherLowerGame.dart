@@ -18,6 +18,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
   bool somebodyHasToDrink = false;
   List<bool> visibilities = [false, false, false];
   List<bool> emptyDrinks = [false, false, false];
+  final String shotGlassFlag = "img/shotGlasses/";
 
   List<int> states = [
     2,
@@ -31,7 +32,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
   final double cardHeight = 400.0;
   Color animationColor = Colors.green;
   int numberOfCards;
-  final String flag = "img/cardDeck/";
+  final String cardFlag = "img/cardDeck/";
   int playerIndex = 0;
   bool showNextCard = false;
   List<String> cards =
@@ -95,10 +96,6 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
       ),
       child: Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.home_outlined, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
           backgroundColor: Colors.black,
           elevation: 0,
           title: Text(printNumberOfCards()),
@@ -275,7 +272,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
         width: 257,
         height: cardHeight,
         child: Image.asset(
-          flag + cards[cardIndex] + ".png",
+          cardFlag + cards[cardIndex] + ".png",
         ));
   }
 
@@ -322,22 +319,22 @@ class _DrinkingCardsState extends State<HigherLowerGame> {
 
   Image selectFullGlass(int i) {
     if (i == 0) {
-      return Image.asset("img/shotGlassFull.png");
+      return Image.asset("${shotGlassFlag}shotGlassFull.png");
     }
     if (i == 1) {
-      return Image.asset("img/cocktailFull.png");
+      return Image.asset("${shotGlassFlag}cocktailFull.png");
     }
-    return Image.asset("img/wineGlassFull.png");
+    return Image.asset("${shotGlassFlag}wineGlassFull.png");
   }
 
   Image selectEmptyGlass(int i) {
     if (i == 0) {
-      return Image.asset("img/shotGlassEmpty.png");
+      return Image.asset("${shotGlassFlag}shotGlassEmpty.png");
     }
     if (i == 1) {
-      return Image.asset("img/cocktailEmpty.png");
+      return Image.asset("${shotGlassFlag}cocktailEmpty.png");
     }
-    return Image.asset("img/wineGlassEmpty.png");
+    return Image.asset("${shotGlassFlag}wineGlassEmpty.png");
   }
 
   bool allInvisible() {

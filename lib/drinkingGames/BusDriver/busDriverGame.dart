@@ -31,10 +31,6 @@ class _BusDriverGameState extends State<BusDriverGame> {
         ),
         child: Scaffold(
             appBar: AppBar(
-              leading: IconButton(
-                icon: Icon(Icons.home_outlined, color: Colors.white),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
               backgroundColor: Colors.black,
               elevation: 0,
               title: Text(printNumberOfRounds()),
