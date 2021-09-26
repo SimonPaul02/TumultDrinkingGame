@@ -3,7 +3,6 @@ import "package:flutter/material.dart";
 import 'package:tumult_trinkspiel/drinkingGames/cardGame.dart';
 import '../../Player.dart';
 
-
 class HigherLowerGame extends StatefulWidget {
   @override
   _DrinkingCardsState createState() => _DrinkingCardsState();
@@ -19,18 +18,13 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
     super.initState();
     numberOfCards = widget.numberOfCards;
     players = widget.players;
+    showBackground = false;
     initCards();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (opacity != 1.0) {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        setState(() {
-          opacity = 1.0;
-        });
-      });
-    }
+    setOpacity();
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -49,7 +43,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
         body: SingleChildScrollView(
           child: Stack(children: [
             fullScreen(),
-           buildCard(),
+            buildCardAnimation(),
             buildShotCounter(),
             Positioned(
               top: cardHeight + cardPaddingTop,
@@ -62,23 +56,15 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
                 ],
               ),
             ),
-            Positioned(
-                bottom: 25,
-                child: evaluateNextTurn(
-                    context) //PlayerTurnEvaluation(widget.players, somebodyHasToDrink, playerIndex)
-                ),
-            Positioned(
-              left: 55,
-              top: 175,
-              child: buildShots(),
-            ),
+            buildNextPlayersTurn(context, 1),
+            buildShots(context, 1),
           ]),
         ),
       ),
     );
   }
 
-  Padding higherLowerButton(bool isHigher) {
+  Widget higherLowerButton(bool isHigher) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: IconButton(
@@ -92,9 +78,9 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
         tooltip: isHigher ? "Higher" : "Lower",
         onPressed: () {
           if (!somebodyHasToDrink) {
-            if (!isHigher && currentCardIsLower()) {
+            if (!isHigher && nextCardIsLower()) {
               animationColor = Colors.green;
-            } else if (isHigher && currentCardIsHigher()) {
+            } else if (isHigher && nextCardIsHigher()) {
               animationColor = Colors.green;
             } else {
               animationColor = Colors.red;
@@ -112,9 +98,9 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
               if (numberOfCards > 0) {
                 numberOfCards--;
               }
-              opacity = opacity == 1.0 ? 0.1 : 1.0;
-              if (widget.players != null) {
-                playerIndex = (playerIndex + 1) % widget.players.length;
+              opacityAfterNextCard();
+              if (players != null) {
+                playerIndex = (playerIndex + 1) % players.length;
               }
             });
           }
@@ -123,4 +109,16 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
     );
   }
 
+  String printNumberOfCards() {
+    if (numberOfCards > 1) {
+      return "Higher-Lower: $numberOfCards Karten übrig";
+    }
+    if (numberOfCards == 1) {
+      return "Higher-Lower: Letzte Karte!";
+    }
+    if (numberOfCards == 0) {
+      return "Nice! Geschafft!";
+    }
+    return "Higher-Lower";
+  }
 }

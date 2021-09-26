@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
                       "/drinkingCards",
                       "In allen Exzellentsstufen, für jeden was dabei: Einzel- und Gruppenkarten, die euren Alkoholpegel steigen lassen werden. Tragt am besten eueren Namen mit Geschlecht vorher ein, dann wird das Spiel optimal auf euch angepasst. Gerne könnt ihr auch angeben, wieviel ihr maximal trinken wollt und dann mit dem Shotcounter auf der rechten Seite mitzählen. Viel Spaß!",
                       "Saufkarten"),*/
-                  buildOutlinedButton("", "", "Mehr"),
+                  buildOutlinedButton("/more", "", "Mehr"),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
                     child: Row(

@@ -6,9 +6,10 @@ import '../Player.dart';
 import '../Shotcounter.dart';
 
 mixin CardGame<T extends StatefulWidget> on State<T> {
+  bool showNextPlayer = true;
   List<Player> players;
-  List<bool> visibilities = [false, false, false];
-  List<bool> emptyDrinks = [false, false, false];
+  List<bool> visibilities = [false, false, false, false];
+  List<bool> emptyDrinks = [false, false, false, false];
   final String shotGlassFlag = "img/shotGlasses/";
   bool somebodyHasToDrink = false;
   var random = new Random();
@@ -25,6 +26,8 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
   List<String> cards =
       []; // not a stack or a queue, because of the nice shuffling method in lists
   int cardIndex = 0;
+  bool showBackground = true;
+  String cardBeforeShuffling = "";
   final List<String> order = [
     "2",
     "3",
@@ -60,18 +63,21 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
     cards.add(char + "S");
   }
 
-  Container evaluateNextTurn(BuildContext context) {
-    if (players != null) {
-      return Container(
-        width: MediaQuery.of(context).size.width,
-        height: 30,
-        child: Text(
-          (somebodyHasToDrink)
-              ? players[(playerIndex - 1) % players.length].name +
-                  " muss trinken"
-              : players[playerIndex].name + " ist dran",
-          style: TextStyle(color: Colors.white, fontSize: 22),
-          textAlign: TextAlign.center,
+  Widget buildNextPlayersTurn(BuildContext context, int playerIndexReduction) {
+    if (players != null && showNextPlayer) {
+      return Positioned(
+        bottom: 25,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 30,
+          child: Text(
+            (somebodyHasToDrink)
+                ? players[(playerIndex - playerIndexReduction) % players.length].name +
+                    " muss trinken"
+                : players[playerIndex].name + " ist dran",
+            style: TextStyle(color: Colors.white, fontSize: 22),
+            textAlign: TextAlign.center,
+          ),
         ),
       );
     }
@@ -83,30 +89,27 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
         width: 257,
         height: cardHeight,
         child: Image.asset(
-          cardFlag + cards[cardIndex] + ".png",
+          (showBackground)
+              ? cardFlag + "BG1" + ".png"
+              : cardFlag + cards[cardIndex] + ".png",
         ));
   }
 
-  String printNumberOfCards() {
-    if (numberOfCards > 1) {
-      return "Higher-Lower: $numberOfCards Karten übrig";
-    }
-    if (numberOfCards == 1) {
-      return "Higher-Lower: Letzte Karte!";
-    }
-    if (numberOfCards == 0) {
-      return "Nice! Geschafft!";
-    }
-    return "Higher-Lower";
+  void opacityAfterNextCard(){
+    setState(() {
+      opacity = opacity == 1.0 ? 0.1 : 1.0;
+    });
+
   }
 
-  bool allInvisible() {
-    for (int i = 0; i < visibilities.length; i++) {
-      if (visibilities[i] == true) {
-        return false;
-      }
+  int findPrevCardLevel() {
+    String prevCardValue;
+    if (cardIndex >= 1) {
+      prevCardValue = cards[(cardIndex - 1)].substring(0, 1);
+    } else {
+      prevCardValue = cardBeforeShuffling;
     }
-    return true;
+    return order.indexOf(prevCardValue);
   }
 
   int findCurrentCardLevel() {
@@ -119,11 +122,51 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
     return order.indexOf(nextCardValue);
   }
 
-  bool currentCardIsLower() {
+  bool nextCardIsHeart() {
+    return (cards[(cardIndex + 1) % 52].substring(1, 2) == "H");
+  }
+
+  bool nextCardIsSpades() {
+    return (cards[(cardIndex + 1) % 52].substring(1, 2) == "S");
+  }
+
+  bool nextCardIsDiamond() {
+    return (cards[(cardIndex + 1) % 52].substring(1, 2) == "D");
+  }
+
+  bool nextCardIsClubs() {
+    return (cards[(cardIndex + 1) % 52].substring(1, 2) == "C");
+  }
+
+  bool nextCardIsBlack() {
+    return nextCardIsSpades() || nextCardIsClubs();
+  }
+
+  bool nextCardOut() {
+    int prevCardLevel = findPrevCardLevel();
+    int currentCardLevel = findCurrentCardLevel();
+    int nextCardLevel = findNextCardLevel();
+
+    return (prevCardLevel < nextCardLevel &&
+            currentCardLevel < nextCardLevel) ||
+        (prevCardLevel > nextCardLevel && currentCardLevel > nextCardLevel);
+  }
+
+  bool nextCardInBetween() {
+    int prevCardLevel = findPrevCardLevel();
+    int currentCardLevel = findCurrentCardLevel();
+    int nextCardLevel = findNextCardLevel();
+
+    return ((prevCardLevel < nextCardLevel &&
+            nextCardLevel < currentCardLevel) ||
+        (currentCardLevel < nextCardLevel && nextCardLevel < prevCardLevel));
+  }
+
+  bool nextCardIsLower() {
     return (findCurrentCardLevel() > findNextCardLevel());
   }
 
-  bool currentCardIsHigher() {
+  bool nextCardIsHigher() {
     return (findCurrentCardLevel() < findNextCardLevel());
   }
 
@@ -135,26 +178,26 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
   }
 
   Image selectFullGlass(int i) {
-    if (i == 0) {
+    if (i % 3 == 0) {
       return Image.asset("${shotGlassFlag}shotGlassFull.png");
     }
-    if (i == 1) {
+    if (i % 3 == 1) {
       return Image.asset("${shotGlassFlag}cocktailFull.png");
     }
     return Image.asset("${shotGlassFlag}wineGlassFull.png");
   }
 
   Image selectEmptyGlass(int i) {
-    if (i == 0) {
+    if (i % 3 == 0) {
       return Image.asset("${shotGlassFlag}shotGlassEmpty.png");
     }
-    if (i == 1) {
+    if (i % 3 == 1) {
       return Image.asset("${shotGlassFlag}cocktailEmpty.png");
     }
     return Image.asset("${shotGlassFlag}wineGlassEmpty.png");
   }
 
-  Widget buildCard() {
+  Widget buildCardAnimation() {
     return Positioned(
         top: cardPaddingTop,
         left: 70,
@@ -182,20 +225,21 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
   Widget buildShotCounter() {
     return Positioned(
         bottom: 20,
+        right: 10,
         child: ShotCounter(
           players: players,
         ));
   }
 
   void checkAllEmpty() {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < visibilities.length; i++) {
       if (emptyDrinks[i] == false && visibilities[i] == true) return;
     }
     setState(() {
       somebodyHasToDrink = false;
     });
 
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < visibilities.length; i++) {
       emptyDrinks[i] = false;
       visibilities[i] = false;
     }
@@ -212,11 +256,22 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
     );
   }
 
-  Row buildShots() {
-    return Row(children: [for (int i = 0; i < 3; i++) buildShot(i)]);
+  Widget buildShots(BuildContext context, int playerIndexReduction) {
+    return Positioned(
+      top: 175,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (int i = 0; i < visibilities.length; i++) buildShot(i, playerIndexReduction)
+          ],
+        ),
+      ),
+    );
   }
 
-  Widget buildShot(int visibilityIndex) {
+  Widget buildShot(int visibilityIndex, int playerReduction) {
     if (visibilities[visibilityIndex] == false &&
         emptyDrinks[visibilityIndex] == false) {
       return Row();
@@ -231,7 +286,7 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
         onPressed: () {
           setState(() {
             if (players != null) {
-              players[(playerIndex - 1) % players.length].currentShots++;
+              players[(playerIndex - playerReduction) % players.length].currentShots++;
             }
             emptyDrinks[visibilityIndex] = true;
             checkAllEmpty();
@@ -246,9 +301,20 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
       showNextCard = !showNextCard;
       cardIndex++;
       if (cardIndex == 52) {
+        cardBeforeShuffling = cards[cardIndex];
         cardIndex = 0;
         cards.shuffle();
       }
     });
+  }
+
+  void setOpacity() {
+    if (opacity != 1.0) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() {
+          opacity = 1.0;
+        });
+      });
+    }
   }
 }

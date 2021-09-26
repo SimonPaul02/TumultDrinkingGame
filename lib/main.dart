@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'more.dart';
 import 'playerConfiguration.dart';
 import "home.dart";
 import 'drinkingGames/HigherLower/higherLowerConfiguration.dart';
@@ -13,6 +14,7 @@ void main() {
     "/drinkingCards": (context) => DrinkingCards(),
     "/playerConfigurationSimple": (context) => PlayerConfiguration(true),
     "/playerConfigurationFull": (context) => PlayerConfiguration(false),
+    "/more":(context) => More(),
 
 
   }));

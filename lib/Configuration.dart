@@ -178,10 +178,10 @@ class _ConfigurationState extends State<Configuration> {
     }
     if (objectCounter == numberOfRounds) {
       if (numberOfPlayers > 0) {
-        int roundsRecommendation = numberOfPlayers * 3;
-        return ("Empfehlung: " + roundsRecommendation.toString());
+        int roundsRecommendation = numberOfPlayers * 2 + 1;
+        return ("Probiert: " + roundsRecommendation.toString());
       }
-      return ("Empfehlung: 3 pro Spieler");
+      return ("Empfehlung: 2 pro Spieler");
     }
     if (objectCounter == numberOfPlayers) {
       return ("Für 2-10 Spieler empfohlen");
