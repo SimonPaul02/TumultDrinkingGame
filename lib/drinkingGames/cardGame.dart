@@ -200,22 +200,27 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
   Widget buildCardAnimation() {
     return Positioned(
         top: cardPaddingTop,
-        left: 70,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(15.0),
-          child: Container(
-            color: animationColor,
-            child: AnimatedOpacity(
-              duration: Duration(milliseconds: 500),
-              opacity: opacity,
-              child: AnimatedCrossFade(
-                firstCurve: Curves.decelerate,
-                duration: Duration(milliseconds: 500),
-                crossFadeState: showNextCard && opacity == 0.0
-                    ? CrossFadeState.showSecond
-                    : CrossFadeState.showFirst,
-                firstChild: buildCardChild(),
-                secondChild: buildCardChild(),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Align(
+            alignment: Alignment.center,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(15.0),
+              child: Container(
+                color: animationColor,
+                child: AnimatedOpacity(
+                  duration: Duration(milliseconds: 500),
+                  opacity: opacity,
+                  child: AnimatedCrossFade(
+                    firstCurve: Curves.decelerate,
+                    duration: Duration(milliseconds: 500),
+                    crossFadeState: showNextCard && opacity == 0.0
+                        ? CrossFadeState.showSecond
+                        : CrossFadeState.showFirst,
+                    firstChild: buildCardChild(),
+                    secondChild: buildCardChild(),
+                  ),
+                ),
               ),
             ),
           ),

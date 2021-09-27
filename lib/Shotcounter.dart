@@ -161,7 +161,7 @@ class _ShotCounterState extends State<ShotCounter>
         : SizedBox(
             height: MediaQuery.of(context).size.height,
             width: 400,
-            child: ListView(
+              child: ListView(
                 shrinkWrap: false,
                 reverse: true,
                 padding: buildTogglePadding(),

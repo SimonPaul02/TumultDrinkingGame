@@ -50,52 +50,63 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
         ),
         backgroundColor: Colors.transparent,
         body: SingleChildScrollView(
-          child: Stack(
-            children: [
-              fullScreen(),
-              buildCardAnimation(),
-              buildShotCounter(),
-              Positioned(
-                top: cardHeight + cardPaddingTop + 20,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
+          child: Container(
+            height: MediaQuery.of(context).size.height * 1.2,
+            child: SafeArea(
+              bottom: false,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  fullScreen(),
+                  buildCardAnimation(),
+                  buildShotCounter(),
+                  Positioned(
+                    top: cardHeight + cardPaddingTop + 20,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          buildBusDriverButton(true),
-                          buildBusDriverButton(false),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              buildBusDriverButton(true),
+                              buildBusDriverButton(false),
+                            ],
+                          ),
+                          state != 2
+                              ? Container()
+                              : Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Image.asset(
+                                          cardFlag + firstCard + ".png",
+                                          width: 80,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Image.asset(
+                                          cardFlag + secondCard + ".png",
+                                          width: 80,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                         ],
                       ),
-                      if (state == 2)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Image.asset(
-                                cardFlag + firstCard + ".png",
-                                width: 80,
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Image.asset(
-                                cardFlag + secondCard + ".png",
-                                width: 80,
-                              ),
-                            )
-                          ],
-                        )
-                    ],
+                    ),
                   ),
-                ),
+                  buildNextPlayersTurn(context, 0),
+                  buildShots(context, 0),
+                ],
               ),
-              buildNextPlayersTurn(context, 0),
-              buildShots(context, 0),
-            ],
+            ),
           ),
         ),
       ),
@@ -130,6 +141,7 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
         });
       }
     }
+
     nextCard();
     nextState();
     opacityAfterNextCard();
@@ -152,8 +164,10 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
                   ),
                   iconSize: 60,
                   onPressed: () {
-                    isRight = nextCardIsClubs() ? true : false;
-                    onPressedState3();
+                    if (!somebodyHasToDrink) {
+                      isRight = nextCardIsClubs() ? true : false;
+                      onPressedState3();
+                    }
                   }),
               IconButton(
                   icon: Image.asset(
@@ -161,8 +175,10 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
                   ),
                   iconSize: 60,
                   onPressed: () {
-                    isRight = nextCardIsHeart() ? true : false;
-                    onPressedState3();
+                    if (!somebodyHasToDrink) {
+                      isRight = nextCardIsHeart() ? true : false;
+                      onPressedState3();
+                    }
                   }),
             ],
           ),
@@ -175,8 +191,10 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
                   ),
                   iconSize: 60,
                   onPressed: () {
-                    isRight = nextCardIsDiamond() ? true : false;
-                    onPressedState3();
+                    if (!somebodyHasToDrink) {
+                      isRight = nextCardIsDiamond() ? true : false;
+                      onPressedState3();
+                    }
                   }),
               IconButton(
                   icon: Image.asset(
@@ -184,8 +202,10 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
                   ),
                   iconSize: 60,
                   onPressed: () {
-                    isRight = nextCardIsSpades() ? true : false;
-                    onPressedState3();
+                    if (!somebodyHasToDrink) {
+                      isRight = nextCardIsSpades() ? true : false;
+                      onPressedState3();
+                    }
                   }),
             ],
           )
@@ -212,10 +232,11 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
               animationColor = Colors.red;
               makeDrinksVisible();
             }
+
+            nextCard();
+            nextState();
+            opacityAfterNextCard();
           }
-          nextCard();
-          nextState();
-          opacityAfterNextCard();
         },
         child: evaluateText(leftButton),
       ),
