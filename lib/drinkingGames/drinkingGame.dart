@@ -1,11 +1,12 @@
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Player.dart';
 import '../Shotcounter.dart';
 
-mixin CardGame<T extends StatefulWidget> on State<T> {
+mixin DrinkingGame<T extends StatefulWidget> on State<T> {
   bool showNextPlayer = true;
   List<Player> players;
   List<bool> visibilities = [false, false, false, false];
@@ -27,6 +28,7 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
       []; // not a stack or a queue, because of the nice shuffling method in lists
   int cardIndex = 0;
   bool showBackground = true;
+  int differentSpacing = 0;
   String cardBeforeShuffling = "";
   final List<String> order = [
     "2",
@@ -63,16 +65,35 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
     cards.add(char + "S");
   }
 
+  Widget buildHomeButton() {
+    return Padding(
+      padding: const EdgeInsets.only(right: 10),
+      child: GestureDetector(
+        onTap: () {
+          int count = 0;
+          Navigator.popUntil(context, (route) {
+            return count++ == 2;
+          });
+        },
+        child: Icon(
+          Icons.home_outlined,
+          size: 26.0,
+        ),
+      ),
+    );
+  }
+
   Widget buildNextPlayersTurn(BuildContext context, int playerIndexReduction) {
     if (players != null && showNextPlayer) {
       return Positioned(
-        bottom: 25,
+        bottom: evaluateBottomPosition(),
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: 30,
           child: Text(
             (somebodyHasToDrink)
-                ? players[(playerIndex - playerIndexReduction) % players.length].name +
+                ? players[(playerIndex - playerIndexReduction) % players.length]
+                        .name +
                     " muss trinken"
                 : players[playerIndex].name + " ist dran",
             style: TextStyle(color: Colors.white, fontSize: 22),
@@ -95,11 +116,10 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
         ));
   }
 
-  void opacityAfterNextCard(){
+  void opacityAfterNextCard() {
     setState(() {
       opacity = opacity == 1.0 ? 0.1 : 1.0;
     });
-
   }
 
   int findPrevCardLevel() {
@@ -227,9 +247,16 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
         ));
   }
 
+  double evaluateBottomPosition() {
+    if (differentSpacing == 0) {
+      return 20.0;
+    }
+    return 100.0 + differentSpacing;
+  }
+
   Widget buildShotCounter() {
     return Positioned(
-        bottom: 20,
+        bottom: evaluateBottomPosition(),
         right: 10,
         child: ShotCounter(
           players: players,
@@ -269,7 +296,8 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (int i = 0; i < visibilities.length; i++) buildShot(i, playerIndexReduction)
+            for (int i = 0; i < visibilities.length; i++)
+              buildShot(i, playerIndexReduction)
           ],
         ),
       ),
@@ -291,7 +319,8 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
         onPressed: () {
           setState(() {
             if (players != null) {
-              players[(playerIndex - playerReduction) % players.length].currentShots++;
+              players[(playerIndex - playerReduction) % players.length]
+                  .currentShots++;
             }
             emptyDrinks[visibilityIndex] = true;
             checkAllEmpty();
@@ -304,12 +333,19 @@ mixin CardGame<T extends StatefulWidget> on State<T> {
   void nextCard() {
     setState(() {
       showNextCard = !showNextCard;
-      cardIndex++;
-      if (cardIndex == 52) {
+      if (cardIndex == 51) {
         cardBeforeShuffling = cards[cardIndex];
-        cardIndex = 0;
-        cards.shuffle();
+        shuffleCards();
+      } else {
+        cardIndex++;
       }
+    });
+  }
+
+  void shuffleCards() {
+    setState(() {
+      cardIndex = 0;
+      cards.shuffle();
     });
   }
 

@@ -5,21 +5,19 @@ class Player {
   String name = "";
   int age = 0;
   int maxShots = 0 ;
-  Image photo = Image.asset("img/penguin.png");
+  Image icon = Image.asset("img/penguin.png");
   Sex sex = Sex("");
   int currentShots = 0;
   double shotPercentage = 0.0;
+  int guessNumber = 0;
 
-  Player({this.name, this.age, this.maxShots, this.photo, this.sex});
 
-  Image takePhoto() {
-    // TODO: Add Take-Photo option
-    return null;
-  }
+  Player({this.name, this.age, this.maxShots, this.icon, this.sex});
+
   
   @override
   String toString() {
-    return ("Name: $name  age: $age maxshots: $maxShots sex: $sex ");
+    return ("Name: $name  age: $age maxshots: $maxShots sex: $sex, Icon: $icon");
   }
 
   void calculatePercentage() {

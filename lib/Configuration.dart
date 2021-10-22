@@ -9,6 +9,7 @@ class Configuration extends StatefulWidget {
   final bool buildNumberOfRounds;
   final Function(BuildContext) gameBuilder;
   final ConfigurationFacade configurationFacade;
+  final bool shotCounterMustBeActive;
 
   Configuration(
       {this.configPath,
@@ -16,7 +17,8 @@ class Configuration extends StatefulWidget {
       this.buildNumberOfCards,
       this.buildNumberOfRounds,
       this.gameBuilder,
-      this.configurationFacade});
+      this.configurationFacade,
+      this.shotCounterMustBeActive: false});
 
   @override
   _ConfigurationState createState() => _ConfigurationState();
@@ -31,13 +33,7 @@ class _ConfigurationState extends State<Configuration> {
 
   @override
   Widget build(BuildContext context) {
-    if (allTextFieldsActive()) {
-      setState(() {
-        continueButtonColor = Colors.green;
-      });
-    } else {
-      continueButtonColor = Colors.grey;
-    }
+    evaluateColor();
 
     return Container(
       decoration: BoxDecoration(
@@ -142,6 +138,7 @@ class _ConfigurationState extends State<Configuration> {
         ),
         cursorColor: Colors.blue,
         onChanged: (number) {
+          evaluateColor();
           if (number == "") {
             setState(() {
               if (objectCounter == numberOfPlayers) {
@@ -209,8 +206,8 @@ class _ConfigurationState extends State<Configuration> {
             setState(() {
               shotCounterActive = !shotCounterActive;
             });
+            evaluateColor();
           },
-          onLongPress: () {},
           leading: Checkbox(
             value: shotCounterActive,
             fillColor: MaterialStateProperty.all(Colors.white),
@@ -235,5 +232,18 @@ class _ConfigurationState extends State<Configuration> {
       return false;
     }
     return (numberOfPlayers > 0);
+  }
+
+  evaluateColor() {
+    setState(() {
+      if (!allTextFieldsActive() ||
+          (allTextFieldsActive() &&
+              widget.shotCounterMustBeActive &&
+              !shotCounterActive)) {
+        continueButtonColor = Colors.grey;
+      } else {
+        continueButtonColor = Colors.green;
+      }
+    });
   }
 }

@@ -45,6 +45,7 @@ class _HomeState extends State<Home> {
                       "/busDriverConfig",
                       "Busfahrer ist ebenfalls ein Klassiker, ihr müsst dabei 3 Mal richtig raten: Zuerst die Farbe, dann ob die nächste größer oder niedriger ist und als letztes ob sich die letzt Karte dazwischen oder außerhalb befindet. Ihr seid solange dran, bis ihr es schafft. Viel Spaß!!",
                       "Busfahrer"),
+                  buildOutlinedButton("/numberGuessingConfig", "", "Zahlen raten"),
                   /*buildOutlinedButton(
                       "/drinkingCards",
                       "In allen Exzellentsstufen, für jeden was dabei: Einzel- und Gruppenkarten, die euren Alkoholpegel steigen lassen werden. Tragt am besten eueren Namen mit Geschlecht vorher ein, dann wird das Spiel optimal auf euch angepasst. Gerne könnt ihr auch angeben, wieviel ihr maximal trinken wollt und dann mit dem Shotcounter auf der rechten Seite mitzählen. Viel Spaß!",

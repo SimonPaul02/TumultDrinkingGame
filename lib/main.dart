@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:tumult_trinkspiel/drinkingGames/NumberGuessing/numberGuessingConfiguration.dart';
 import 'more.dart';
 import 'playerConfiguration.dart';
 import "home.dart";
@@ -7,17 +8,21 @@ import 'drinkingGames/drinkingCards.dart';
 import 'drinkingGames/BusDriver/busDriverConfiguration.dart';
 
 void main() {
-  runApp(MaterialApp(initialRoute: "/home", routes: {
-    "/home": (contex) => Home(),
-    "/higherLowerConfig": (context) => HigherLowerConfiguration(),
-    "/busDriverConfig": (context) => BusDriverConfiguration(),
-    "/drinkingCards": (context) => DrinkingCards(),
-    "/playerConfigurationSimple": (context) => PlayerConfiguration(true),
-    "/playerConfigurationFull": (context) => PlayerConfiguration(false),
-    "/more":(context) => More(),
-
-
-  }));
+  runApp(MaterialApp(
+    initialRoute: "/home",
+    routes: {
+      "/home": (contex) => Home(),
+      "/higherLowerConfig": (context) => HigherLowerConfiguration(),
+      "/busDriverConfig": (context) => BusDriverConfiguration(),
+      "/numberGuessingConfig": (context) => NumberGuessingConfiguration(),
+      "/drinkingCards": (context) => DrinkingCards(),
+      "/playerConfigurationSimple": (context) => PlayerConfiguration(true, false),
+      "/playerConfigurationFull": (context) => PlayerConfiguration(false, false),
+      "/playerConfigurationIcon": (context) => PlayerConfiguration(false, true),
+      "/more": (context) => More(),
+    },
+    debugShowCheckedModeBanner: false,
+  ));
 }
 
 class Tumult extends StatelessWidget {
@@ -26,6 +31,7 @@ class Tumult extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //

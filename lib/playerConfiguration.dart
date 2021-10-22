@@ -5,10 +5,9 @@ import 'Sex.dart';
 
 class PlayerConfiguration extends StatefulWidget {
   final bool simplePlayer;
+  final bool iconPlayer;
 
-  PlayerConfiguration(
-    this.simplePlayer,
-  );
+  PlayerConfiguration(this.simplePlayer, this.iconPlayer);
 
   @override
   _PlayerConfigurationState createState() => _PlayerConfigurationState();
@@ -20,6 +19,7 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
   final String diverse = "diverse.png";
   List<TextEditingController> textEditingControllers;
   List<Sex> sexes;
+  List<String> icons = ["owlDrunk"];
   int numberOfPlayers = 1;
   int numberOfTextFields;
   final Sex sex = Sex("");
@@ -29,7 +29,8 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
   void initState() {
     super.initState();
     finishButtonColor = Colors.grey;
-    if (widget.simplePlayer) {
+
+    if (widget.simplePlayer || widget.iconPlayer) {
       numberOfTextFields = 2;
     } else {
       numberOfTextFields = 3;
@@ -84,7 +85,19 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
                         return;
                       }
                       List<Player> players = [];
-                      if (widget.simplePlayer) {
+                      if (widget.iconPlayer) {
+                        for (int i = 0;
+                            i < textEditingControllers.length;
+                            i += numberOfTextFields) {
+                          players.add(Player(
+                              name: textEditingControllers[i].text,
+                              maxShots:
+                                  int.parse(textEditingControllers[i + 1].text),
+                              icon: Image.asset("img/playerIcons/" +
+                                  icons[i ~/ numberOfTextFields] +
+                                  ".png")));
+                        }
+                      } else if (widget.simplePlayer) {
                         for (int i = 0;
                             i < textEditingControllers.length;
                             i += numberOfTextFields) {
@@ -123,8 +136,11 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
                       for (int i = 0; i < numberOfTextFields; i++) {
                         textEditingControllers.add(TextEditingController());
                       }
-                      if (!widget.simplePlayer) {
+                      if (!widget.simplePlayer && !widget.iconPlayer) {
                         sexes.add(Sex(sex.male));
+                      }
+                      if (widget.iconPlayer) {
+                        icons.add("owlDrunk");
                       }
                     });
                   },
@@ -151,10 +167,27 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
   }
 
   Padding buildPlayerField(int i) {
+    if (widget.iconPlayer) {
+      return buildNewIconPlayerField(i);
+    }
     if (widget.simplePlayer) {
       return buildNewSmallPlayerField(i);
     }
     return buildNewFullPlayerField(i);
+  }
+
+  Padding buildNewIconPlayerField(int i) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: Row(
+        children: [
+          buildGarbageCan(i),
+          buildName(i),
+          buildNumberField("Shots", i + 1),
+          buildPlayerIcon(i ~/ numberOfTextFields),
+        ],
+      ),
+    );
   }
 
   Padding buildNewFullPlayerField(int i) {
@@ -271,6 +304,47 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
     );
   }
 
+  buildPlayerIcon(int i) {
+    return Expanded(
+      flex: 6,
+      child: Padding(
+        padding: buildPadding(),
+        child: SizedBox(
+          height: 70,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.black38,
+            ),
+            child: IconButton(
+                icon: Image.asset("img/playerIcons/" + icons[i] + ".png"),
+                onPressed: () {
+                  setState(() {
+                    switch (icons[i]) {
+                      case "owlDrunk":
+                        {
+                          icons[i] = "penguDrunk";
+                          break;
+                        }
+                      case "penguDrunk":
+                        {
+                          icons[i] = "rabbitDrunk";
+                          break;
+                        }
+                      default:
+                        {
+                          icons[i] = "owlDrunk";
+                          break;
+                        }
+                    }
+                  });
+                }),
+          ),
+        ),
+      ),
+    );
+  }
+
   Expanded buildGarbageCan(i) {
     return Expanded(
       flex: 4,
@@ -286,8 +360,11 @@ class _PlayerConfigurationState extends State<PlayerConfiguration> {
                   for (int j = 0; j < numberOfTextFields; j++) {
                     textEditingControllers.removeAt(i);
                   }
-                  if (!widget.simplePlayer) {
+                  if (!widget.simplePlayer && !widget.iconPlayer) {
                     sexes.removeAt(i ~/ numberOfTextFields);
+                  }
+                  if (widget.iconPlayer) {
+                    icons.removeAt(i ~/ numberOfTextFields);
                   }
                   numberOfPlayers--;
                   evaluateFinishButtonColor();

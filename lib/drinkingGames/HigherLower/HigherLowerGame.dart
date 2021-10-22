@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import "package:flutter/material.dart";
-import 'package:tumult_trinkspiel/drinkingGames/cardGame.dart';
+import 'package:tumult_trinkspiel/drinkingGames/drinkingGame.dart';
 import '../../Player.dart';
 
 class HigherLowerGame extends StatefulWidget {
@@ -12,10 +12,11 @@ class HigherLowerGame extends StatefulWidget {
   HigherLowerGame({this.players, this.numberOfCards});
 }
 
-class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
+class _DrinkingCardsState extends State<HigherLowerGame> with DrinkingGame {
   @override
   void initState() {
     super.initState();
+    differentSpacing = 0;
     numberOfCards = widget.numberOfCards;
     players = widget.players;
     showBackground = false;
@@ -24,6 +25,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
 
   @override
   Widget build(BuildContext context) {
+    print(cardIndex);
     setOpacity();
     return Container(
       decoration: BoxDecoration(
@@ -35,6 +37,9 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
+          actions: [
+            buildHomeButton(),
+          ],
           elevation: 0,
           title: Text(printNumberOfCards()),
           centerTitle: true,
@@ -47,13 +52,16 @@ class _DrinkingCardsState extends State<HigherLowerGame> with CardGame {
             buildShotCounter(),
             Positioned(
               top: cardHeight + cardPaddingTop,
-              left: 85.0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  higherLowerButton(true),
-                  higherLowerButton(false),
-                ],
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    higherLowerButton(true),
+                    higherLowerButton(false),
+                  ],
+                ),
               ),
             ),
             buildNextPlayersTurn(context, 1),

@@ -82,7 +82,7 @@ class _MoreState extends State<More> {
                       iconSize: 140.0,
                       onPressed: () {
                         openUrl(
-                            "https://www.paypal.com/donate?hosted_button_id=RJVWS9WSKN4Y6");
+                            "https://paypal.me/simonpaul02/",);
                       },
                     ),
                   ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tumult_trinkspiel/drinkingGames/cardGame.dart';
+import 'package:tumult_trinkspiel/drinkingGames/drinkingGame.dart';
 import '../../Player.dart';
 
 class BusDriverGame extends StatefulWidget {
@@ -12,9 +12,8 @@ class BusDriverGame extends StatefulWidget {
   BusDriverGame({this.players, this.numberOfRounds});
 }
 
-class _BusDriverGameState extends State<BusDriverGame> with CardGame {
+class _BusDriverGameState extends State<BusDriverGame> with DrinkingGame {
   final String suitsFlag = "img/suits/";
-
   int roundsRemaining;
   String firstCard = "";
   String secondCard = "";
@@ -28,11 +27,14 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
     super.initState();
     roundsRemaining = widget.numberOfRounds;
     players = widget.players;
+    differentSpacing = 360;
     initCards();
   }
 
   @override
   Widget build(BuildContext context) {
+    print("$cardIndex");
+
     setOpacity();
     return Container(
       decoration: BoxDecoration(
@@ -44,6 +46,9 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
+          actions: [
+            buildHomeButton(),
+          ],
           elevation: 0,
           title: Text(printNumberOfRounds()),
           centerTitle: true,
@@ -51,7 +56,10 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
         backgroundColor: Colors.transparent,
         body: SingleChildScrollView(
           child: Container(
-            height: MediaQuery.of(context).size.height * 1.2,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height + differentSpacing,
             child: SafeArea(
               bottom: false,
               child: Stack(
@@ -63,7 +71,10 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
                   Positioned(
                     top: cardHeight + cardPaddingTop + 20,
                     child: Container(
-                      width: MediaQuery.of(context).size.width,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -77,32 +88,32 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
                           state != 2
                               ? Container()
                               : Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Image.asset(
-                                          cardFlag + firstCard + ".png",
-                                          width: 80,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Image.asset(
-                                          cardFlag + secondCard + ".png",
-                                          width: 80,
-                                        ),
-                                      )
-                                    ],
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.asset(
+                                    cardFlag + firstCard + ".png",
+                                    width: 80,
                                   ),
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.asset(
+                                    cardFlag + secondCard + ".png",
+                                    width: 80,
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  buildNextPlayersTurn(context, 0),
+                  state == 3 ? Container() : buildNextPlayersTurn(context, 0),
                   buildShots(context, 0),
                 ],
               ),
@@ -141,7 +152,6 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
         });
       }
     }
-
     nextCard();
     nextState();
     opacityAfterNextCard();
@@ -232,12 +242,11 @@ class _BusDriverGameState extends State<BusDriverGame> with CardGame {
               animationColor = Colors.red;
               makeDrinksVisible();
             }
-
-            nextCard();
-            nextState();
-            opacityAfterNextCard();
+            (cardIndex >= 48 && !isRight) ? shuffleCards() : nextCard();
+          nextState();
+          opacityAfterNextCard();
           }
-        },
+          },
         child: evaluateText(leftButton),
       ),
     );
