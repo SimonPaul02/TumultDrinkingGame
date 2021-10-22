@@ -41,8 +41,11 @@ class _DrinkingCardsState extends State<HigherLowerGame> with DrinkingGame {
             buildHomeButton(),
           ],
           elevation: 0,
-          title: Text(printNumberOfCards()),
           centerTitle: true,
+          title: FittedBox(
+            fit: BoxFit.fitWidth,
+            child: Text(displayNumberOfCards()),
+          ),
         ),
         backgroundColor: Colors.transparent,
         body: SingleChildScrollView(
@@ -117,7 +120,7 @@ class _DrinkingCardsState extends State<HigherLowerGame> with DrinkingGame {
     );
   }
 
-  String printNumberOfCards() {
+  String displayNumberOfCards() {
     if (numberOfCards > 1) {
       return "Higher-Lower: $numberOfCards Karten übrig";
     }

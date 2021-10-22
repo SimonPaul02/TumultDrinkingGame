@@ -148,17 +148,14 @@ class _NumberGuessingGameState extends State<NumberGuessingGame>
       child: ClipOval(
         child: Container(
           child: Padding(
-            padding: const EdgeInsets.all(20.0), //width of the border
+            padding: const EdgeInsets.all(10.0), //width of the border
             child: ClipOval(
-              child: Container(
-                height: 110,
-                child: Text(
-                  randomNumber.toString(),
-                  style: TextStyle(
-                    fontSize: 100.0,
-                  ),
-                  textAlign: TextAlign.center,
+              child: Text(
+                randomNumber.toString(),
+                style: TextStyle(
+                  fontSize: 100.0,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
@@ -168,7 +165,6 @@ class _NumberGuessingGameState extends State<NumberGuessingGame>
               Colors.lightBlueAccent,
               Colors.blue.shade800
             ]),
-            borderRadius: BorderRadius.circular(5),
           ),
         ),
       ),
